@@ -263,11 +263,12 @@ async function seedDemoUsers() {
     // Insert users with related data
     for (const { user, skills: userSkills, interests: userInterests } of demoUsers) {
         // Check if user already exists
-        const existing = await db
+        const existingUsers = await db
             .select()
             .from(userProfiles)
-            .where(eq(userProfiles.email, user.email))
-            .get();
+            .where(eq(userProfiles.email, user.email));
+
+        const existing = existingUsers[0];
 
         if (existing) {
             console.log(`⏭️  Skipped ${user.name} (${user.email}) - already exists`);

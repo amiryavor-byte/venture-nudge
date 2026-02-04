@@ -395,11 +395,10 @@ async function seedDemoPlans() {
         const planId = uuidv4();
 
         // Check if plan already exists
-        const existing = await db
+        const existing = (await db
             .select()
             .from(businessPlans)
-            .where(eq(businessPlans.name, plan.name))
-            .get();
+            .where(eq(businessPlans.name, plan.name)))[0];
 
         if (existing) {
             console.log(`⏭️  Skipped "${plan.name}" - already exists`);
