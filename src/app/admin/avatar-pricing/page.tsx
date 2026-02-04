@@ -196,7 +196,7 @@ export default function AvatarPricingPage() {
                 <h3 className="font-semibold mb-2">💡 Estimated Cost per Message</h3>
                 <div className="text-sm text-slate-300 space-y-1">
                     <p>Base cost: ~${((settings.sttCostPerMinute + settings.rtcCostPerMinute) / 10000 + (settings.ttsCostPer1kChars / 10000) * 0.2 + settings.llmCostPerMessage / 10000).toFixed(3)}</p>
-                    <p>Pro tier charge: ~${((settings.sttCostPerMinute + settings.rtcCostPerMinute) / 10000 + (settings.ttsCostPer1kChars / 10000) * 0.2 + settings.llmCostPerMessage / 10000) * (settings.proTierMarkup / 100)}.toFixed(3)}</p>
+                    <p>Pro tier charge: ~${(((settings.sttCostPerMinute + settings.rtcCostPerMinute) / 10000 + (settings.ttsCostPer1kChars / 10000) * 0.2 + settings.llmCostPerMessage / 10000) * (settings.proTierMarkup / 100)).toFixed(3)}</p>
                     <p className="text-xs text-slate-400">Assumes 1 min audio, 200 chars response</p>
                 </div>
             </div>
