@@ -1,6 +1,8 @@
 import { BusinessPlanData, AnyProjection } from '@/lib/business-plan-service';
 import { TrendingUp, DollarSign, BarChart3 } from 'lucide-react';
 import { InlineEditableNumber } from './InlineEditableNumber';
+import { Popover } from '@/components/ui/popover';
+import { CalculationPopover } from './CalculationPopover';
 
 interface FinancialsSectionProps {
     data: BusinessPlanData;
@@ -71,6 +73,74 @@ export function FinancialsSection({ data, onChange }: FinancialsSectionProps) {
         onChange({ ...data, projections: updatedProjections });
     };
 
+    // Calculation breakdown helpers
+    const getRevenuePopover = (proj: AnyProjection) => {
+        const revenuePerUser = proj.clientCount && proj.clientCount > 0
+            ? proj.revenue / proj.clientCount
+            : 0;
+
+        return (
+            <CalculationPopover
+                title="Revenue Calculation"
+                formulas={[
+                    `${proj.clientCount?.toLocaleString() || 0} users × $${Math.round(revenuePerUser)} per user = ${formatCurrency(proj.revenue)}`
+                ]}
+                breakdown={[
+                    { label: 'User Count', value: proj.clientCount || 0, color: 'h-full bg-indigo-500' },
+                    { label: 'Revenue per User', value: Math.round(revenuePerUser), color: 'h-full bg-purple-500' },
+                ]}
+                notes={[
+                    'Revenue scales with user growth',
+                    'Average revenue per user maintained across projections'
+                ]}
+            />
+        );
+    };
+
+    const getExpensesPopover = (proj: AnyProjection) => {
+        const expenseRatio = proj.revenue > 0
+            ? (proj.expenses / proj.revenue) * 100
+            : 0;
+
+        return (
+            <CalculationPopover
+                title="Expenses Calculation"
+                formulas={[
+                    `${formatCurrency(proj.revenue)} × ${Math.round(expenseRatio)}% = ${formatCurrency(proj.expenses)}`,
+                    `${formatCurrency(proj.revenue)} - ${formatCurrency(proj.profit)} = ${formatCurrency(proj.expenses)}`
+                ]}
+                breakdown={[
+                    { label: 'Expenses', value: proj.expenses, color: 'h-full bg-red-500/70' },
+                    { label: 'Profit', value: proj.profit, color: 'h-full bg-green-500' },
+                ]}
+                notes={[
+                    `Expense Ratio: ${Math.round(expenseRatio)}%`,
+                    'Lower expenses = higher profit margin'
+                ]}
+            />
+        );
+    };
+
+    const getProfitPopover = (proj: AnyProjection, margin: number) => {
+        return (
+            <CalculationPopover
+                title="Profit Calculation"
+                formulas={[
+                    `${formatCurrency(proj.revenue)} - ${formatCurrency(proj.expenses)} = ${formatCurrency(proj.profit)}`,
+                    `${formatCurrency(proj.revenue)} × ${Math.round(margin)}% = ${formatCurrency(proj.profit)}`
+                ]}
+                breakdown={[
+                    { label: 'Profit', value: proj.profit, color: 'h-full bg-green-500' },
+                    { label: 'Expenses', value: proj.expenses, color: 'h-full bg-zinc-600' },
+                ]}
+                notes={[
+                    `Profit Margin: ${Math.round(margin)}%`,
+                    'Higher margin = more efficient operations'
+                ]}
+            />
+        );
+    };
+
     return (
         <div className="bg-zinc-900/20 rounded-2xl border border-white/5 overflow-hidden">
             <div className="bg-zinc-900/50 backdrop-blur-sm border-b border-white/10 p-6">
@@ -107,13 +177,25 @@ export function FinancialsSection({ data, onChange }: FinancialsSectionProps) {
                                         <tr key={idx} className="border-b border-white/5 hover:bg-zinc-900/40 transition">
                                             <td className="py-3 px-4 font-medium text-zinc-200">{proj.year}</td>
                                             <td className="py-3 px-4 text-right font-semibold text-indigo-400">
-                                                {formatCurrency(proj.revenue)}
+                                                <Popover content={getRevenuePopover(proj)}>
+                                                    <button className="hover:underline decoration-dotted cursor-help transition">
+                                                        {formatCurrency(proj.revenue)}
+                                                    </button>
+                                                </Popover>
                                             </td>
                                             <td className="py-3 px-4 text-right text-zinc-300">
-                                                {formatCurrency(proj.expenses)}
+                                                <Popover content={getExpensesPopover(proj)}>
+                                                    <button className="hover:underline decoration-dotted cursor-help transition">
+                                                        {formatCurrency(proj.expenses)}
+                                                    </button>
+                                                </Popover>
                                             </td>
                                             <td className="py-3 px-4 text-right font-semibold text-indigo-300">
-                                                {formatCurrency(proj.profit)}
+                                                <Popover content={getProfitPopover(proj, margin)}>
+                                                    <button className="hover:underline decoration-dotted cursor-help transition">
+                                                        {formatCurrency(proj.profit)}
+                                                    </button>
+                                                </Popover>
                                             </td>
                                             <td className="py-3 px-4 text-right text-zinc-300">
                                                 {onChange ? (
