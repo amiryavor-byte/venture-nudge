@@ -1,0 +1,56 @@
+import { openai } from '@ai-sdk/openai';
+import { streamText, tool } from 'ai';
+import { z } from 'zod';
+
+export const maxDuration = 30;
+
+export async function POST(req: Request) {
+    const { messages } = await req.json();
+
+    const result = streamText({
+        model: openai('gpt-4-turbo'),
+        system: `
+      You are Moltbot, an expert SaaS Business Consultant.
+      Your goal is to help the user brainstorm and refine their business idea.
+      
+      You need to gather specific details to build a "Business Plan Canvas".
+      Do not ask for everything at once. Have a natural conversation.
+      
+      Key details to extract (update context when you hear these):
+      1. **Business Name**: The name of the venture.
+      2. **Problem**: What pain point are they solving?
+      3. **Target Audience**: Who is the customer?
+      4. **Solution**: What is the product/service?
+      5. **Monetization**: How will they make money?
+      
+      When the user provides any of this information, use the 'updateBusinessContext' tool to save it.
+      
+      Be encouraging, insightful, and ask probing questions to help them think deeper.
+      If the idea seems vague, ask for clarification.
+      If the idea seems solid, challenge them gently on potential risks (e.g., "That sounds great, but how will you handle customer acquisition costs?").
+    `,
+        messages,
+        tools: {
+            updateBusinessContext: tool({
+                description: 'Update the structured business context based on user input',
+                parameters: z.object({
+                    businessName: z.string().optional().describe('The name of the business'),
+                    problem: z.string().optional().describe('The core problem being solved'),
+                    targetAudience: z.string().optional().describe('The primary customer segment'),
+                    solution: z.string().optional().describe('The proposed product or service'),
+                    monetization: z.string().optional().describe('Revenue model (subs, ads, one-time, etc.)'),
+                }),
+                execute: async ({ businessName, problem, targetAudience, solution, monetization }) => {
+                    // In a real app, we might save this to a DB here.
+                    // For now, the client-side `onToolCall` will handle the UI update.
+                    return {
+                        updatedFields: { businessName, problem, targetAudience, solution, monetization },
+                        message: "Context updated"
+                    };
+                },
+            }),
+        },
+    });
+
+    return result.toDataStreamResponse();
+}
