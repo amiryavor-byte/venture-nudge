@@ -1,7 +1,7 @@
+'use client';
+
 // Force dynamic rendering - admin pages should not be statically generated
 export const dynamic = 'force-dynamic';
-
-'use client';
 
 import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';

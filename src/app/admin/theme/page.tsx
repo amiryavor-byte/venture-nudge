@@ -1,7 +1,7 @@
+'use client';
+
 // Force dynamic rendering - admin pages should not be statically generated
 export const dynamic = 'force-dynamic';
-
-'use client';
 
 import { Paintbrush } from 'lucide-react';
 import { ThemeSelector } from '@/components/admin/ThemeSelector';
