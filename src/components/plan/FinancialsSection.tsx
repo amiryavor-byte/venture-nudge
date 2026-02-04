@@ -102,20 +102,47 @@ export function FinancialsSection({ data, onChange }: FinancialsSectionProps) {
             ? (proj.expenses / proj.revenue) * 100
             : 0;
 
+        // Calculate expense categories based on typical SaaS business ratios
+        const expenseBreakdown = [
+            {
+                label: 'Salaries & Payroll',
+                value: Math.round(proj.expenses * 0.50), // 50% of expenses
+                color: 'h-full bg-blue-500'
+            },
+            {
+                label: 'Marketing & Sales',
+                value: Math.round(proj.expenses * 0.20), // 20% of expenses
+                color: 'h-full bg-purple-500'
+            },
+            {
+                label: 'Infrastructure & Hosting',
+                value: Math.round(proj.expenses * 0.15), // 15% of expenses
+                color: 'h-full bg-indigo-500'
+            },
+            {
+                label: 'Operations & Support',
+                value: Math.round(proj.expenses * 0.10), // 10% of expenses
+                color: 'h-full bg-cyan-500'
+            },
+            {
+                label: 'Software & Tools',
+                value: Math.round(proj.expenses * 0.05), // 5% of expenses
+                color: 'h-full bg-teal-500'
+            },
+        ];
+
         return (
             <CalculationPopover
-                title="Expenses Calculation"
+                title="Expenses Breakdown"
                 formulas={[
                     `${formatCurrency(proj.revenue)} × ${Math.round(expenseRatio)}% = ${formatCurrency(proj.expenses)}`,
                     `${formatCurrency(proj.revenue)} - ${formatCurrency(proj.profit)} = ${formatCurrency(proj.expenses)}`
                 ]}
-                breakdown={[
-                    { label: 'Expenses', value: proj.expenses, color: 'h-full bg-red-500/70' },
-                    { label: 'Profit', value: proj.profit, color: 'h-full bg-green-500' },
-                ]}
+                breakdown={expenseBreakdown}
                 notes={[
+                    `Total Expenses: ${formatCurrency(proj.expenses)}`,
                     `Expense Ratio: ${Math.round(expenseRatio)}%`,
-                    'Lower expenses = higher profit margin'
+                    'Breakdown shows typical allocation for this stage'
                 ]}
             />
         );

@@ -8,12 +8,12 @@ import { v4 as uuidv4 } from 'uuid';
 
 // --- USERS ---
 export async function getUsers() {
-    return await db.select().from(userProfiles).all();
+    return await db.select().from(userProfiles);
 }
 
 // --- SETTINGS ---
 export async function getSettings() {
-    const settings = await db.select().from(appSettings).all();
+    const settings = await db.select().from(appSettings);
     // Convert array to object for easier consumption
     return settings.reduce((acc, curr) => {
         acc[curr.key] = curr.value;

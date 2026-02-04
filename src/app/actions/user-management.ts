@@ -45,7 +45,7 @@ export async function getUsersWithSearch(query?: string) {
                 )
             );
     } else {
-        users = await db.select().from(userProfiles).all();
+        users = await db.select().from(userProfiles);
     }
 
     // Remove sensitive fields
