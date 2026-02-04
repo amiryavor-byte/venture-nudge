@@ -193,8 +193,15 @@ export function ChatInterface({ onContextUpdate }: ChatInterfaceProps) {
         const userMessage = { id: Date.now().toString(), role: 'user' as const, content };
         setMessages([...(messages || []), userMessage]);
 
-        // Send to AI
-        await sendChatMessage(content);
+        // Send to AI - sendMessage expects a message object with parts
+        try {
+            await sendChatMessage({
+                role: 'user',
+                content: [{ type: 'text', text: content }]
+            });
+        } catch (error) {
+            console.error('Failed to send message:', error);
+        }
 
         // Clear input
         setInput('');
@@ -207,6 +214,11 @@ export function ChatInterface({ onContextUpdate }: ChatInterfaceProps) {
     };
 
     const clearChatHistory = () => {
+        // Show confirmation dialog
+        if (!window.confirm('Are you sure you want to clear all chat history? This cannot be undone.')) {
+            return;
+        }
+
         if (chatHelpers?.setMessages) {
             chatHelpers.setMessages([{
                 id: 'welcome',
