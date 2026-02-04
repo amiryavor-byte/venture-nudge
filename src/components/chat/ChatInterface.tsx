@@ -5,6 +5,7 @@ import { useRef, useEffect, useState } from 'react';
 import { Send, Bot, User, Sparkles, Mic, MicOff, Phone, PhoneOff } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useRealtimeAPI, RealtimeMessage } from '../voice/useRealtimeAPI';
+import { AIAvatar } from '../avatar';
 // import { Message } from 'ai'; 
 
 interface ChatInterfaceProps {
@@ -423,6 +424,14 @@ export function ChatInterface({ onContextUpdate }: ChatInterfaceProps) {
             <div className="absolute bottom-0 left-0 right-0 p-1 text-[10px] text-zinc-800 text-center opacity-0 hover:opacity-100 transition-opacity pointer-events-none">
                 {chatHelpers ? 'Connected' : 'Connecting...'}
             </div>
+
+            {/* AI Avatar */}
+            <AIAvatar
+                isVoiceActive={isVoiceConnected}
+                onConnectionChange={(connected) => {
+                    console.log('Avatar connection changed:', connected);
+                }}
+            />
         </div>
     );
 }

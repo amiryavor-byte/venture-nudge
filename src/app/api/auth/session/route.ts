@@ -20,11 +20,12 @@ export async function GET(request: NextRequest) {
         const { payload } = await jwtVerify(token, JWT_SECRET);
 
         // Fetch fresh user data
-        const user = await db
+        const users = await db
             .select()
             .from(userProfiles)
-            .where(eq(userProfiles.id, payload.userId as string))
-            .get();
+            .where(eq(userProfiles.id, payload.userId as string));
+
+        const user = users[0];
 
         if (!user) {
             return NextResponse.json({ user: null }, { status: 401 });

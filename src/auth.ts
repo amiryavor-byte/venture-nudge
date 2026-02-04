@@ -35,11 +35,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async () => {
                         return null;
                     }
 
-                    const user = await db
+                    const users = await db
                         .select()
                         .from(userProfiles)
-                        .where(eq(userProfiles.email, credentials.email.toString().toLowerCase()))
-                        .get();
+                        .where(eq(userProfiles.email, credentials.email.toString().toLowerCase()));
+
+                    const user = users[0];
 
                     if (!user || !user.passwordHash) {
                         return null;
@@ -108,11 +109,12 @@ export const { handlers, auth, signIn, signOut } = NextAuth(async () => {
             async signIn({ user, account, profile }) {
                 // For OAuth providers, set default role if new user
                 if (account?.provider !== "credentials" && user.id) {
-                    const existingUser = await db
+                    const existingUsers = await db
                         .select()
                         .from(userProfiles)
-                        .where(eq(userProfiles.id, user.id))
-                        .get();
+                        .where(eq(userProfiles.id, user.id));
+
+                    const existingUser = existingUsers[0];
 
                     if (!existingUser?.role) {
                         await db
