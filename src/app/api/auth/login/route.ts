@@ -21,11 +21,12 @@ export async function POST(request: NextRequest) {
         }
 
         // Find user by email
-        const user = await db
+        const users = await db
             .select()
             .from(userProfiles)
-            .where(eq(userProfiles.email, email))
-            .get();
+            .where(eq(userProfiles.email, email));
+
+        const user = users[0];
 
         if (!user) {
             return NextResponse.json(

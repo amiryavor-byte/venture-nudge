@@ -53,11 +53,12 @@ export async function POST(request: NextRequest) {
         }
 
         // Check if user already exists
-        const existingUser = await db
+        const existingUsers = await db
             .select()
             .from(userProfiles)
-            .where(eq(userProfiles.email, email.toLowerCase()))
-            .get();
+            .where(eq(userProfiles.email, email.toLowerCase()));
+
+        const existingUser = existingUsers[0];
 
         if (existingUser) {
             return NextResponse.json(
@@ -70,7 +71,7 @@ export async function POST(request: NextRequest) {
         const passwordHash = await bcrypt.hash(password, 10);
 
         // Create user profile
-        const user = await db
+        const users = await db
             .insert(userProfiles)
             .values({
                 email: email.toLowerCase(),
@@ -78,8 +79,9 @@ export async function POST(request: NextRequest) {
                 passwordHash,
                 role: 'user', // Default role for signups
             })
-            .returning()
-            .get();
+            .returning();
+
+        const user = users[0];
 
         if (!user) {
             return NextResponse.json(
