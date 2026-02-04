@@ -9,9 +9,15 @@ const JWT_SECRET = new TextEncoder().encode(
     process.env.JWT_SECRET || 'your-secret-key-change-in-production'
 );
 
-export async function POST(request: NextRequest) {
+export async function POST(request: Request) {
     try {
-        const { email, password } = await request.json();
+        const body = await request.json();
+        const { email, password } = body;
+
+        // DEBUG: Log connection info (safe - no full URL)
+        console.log('[LOGIN] DATABASE_URL exists:', !!process.env.DATABASE_URL);
+        console.log('[LOGIN] DATABASE_URL type:', process.env.DATABASE_URL?.substring(0, 15));
+        console.log('[LOGIN] Attempting login for:', email);
 
         if (!email || !password) {
             return NextResponse.json(
@@ -21,6 +27,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Find user by email
+        console.log('[LOGIN] About to query database for user');
         const users = await db
             .select()
             .from(userProfiles)
