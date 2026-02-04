@@ -1,5 +1,8 @@
 'use client';
 
+// Force dynamic rendering to prevent SSR window access errors
+export const dynamic = 'force-dynamic';
+
 import { useState } from 'react';
 import { ChatInterface } from '@/components/chat/ChatInterface';
 import { ProgressPillar } from '@/components/chat/ProgressPillar';
