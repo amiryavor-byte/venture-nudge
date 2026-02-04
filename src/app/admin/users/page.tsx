@@ -1,3 +1,6 @@
+// Force dynamic rendering - admin pages should not be statically generated
+export const dynamic = 'force-dynamic';
+
 import { getUsersWithSearch } from '@/app/actions/user-management';
 import { UserTable } from './user-table';
 

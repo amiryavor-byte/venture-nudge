@@ -1,3 +1,6 @@
+// Force dynamic rendering - admin pages should not be statically generated
+export const dynamic = 'force-dynamic';
+
 import { getAffiliatePrograms, getAffiliateStats } from '@/app/actions/affiliate-management';
 import { AffiliateTable } from './affiliate-table';
 import { StatsCard } from './stats-cards';

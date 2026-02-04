@@ -1,3 +1,6 @@
+// Force dynamic rendering - admin pages should not be statically generated
+export const dynamic = 'force-dynamic';
+
 import { getBusinessModels, deleteBusinessModel } from '@/app/actions/business-models';
 import { ModelForm } from './model-form';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
